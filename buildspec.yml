@@ -1,0 +1,24 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      - echo Instalando dependencias...
+      - pip install --upgrade pip
+  pre_build:
+    commands:
+      - echo Fase de pre-construcción...
+  build:
+    commands:
+      - echo Construcción iniciada en `date`
+      # Instalar las dependencias en el directorio 'package'
+      - pip install -r requirements.txt -t .
+      - zip -r LinkedinPublisher.zip ./* -x buildspec.yml -x .gitignore
+  post_build:
+    commands:
+      - echo Construcción completada en `date`
+artifacts:
+  files:
+    - LinkedinPublisher.zip
