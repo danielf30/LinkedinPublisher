@@ -52,20 +52,4 @@ def lambda_handler(event, context):
         ugc_posts_create_response = restli_client.create(
             resource_path=UGC_POSTS_RESOURCE,
             entity={
-                "author": f"urn:li:person:{person_urn}",
-                "lifecycleState": "PUBLISHED",
-                "specificContent": {
-                    "com.linkedin.ugc.ShareContent": {
-                        "shareCommentary": {
-                            "text": post_text
-                        },
-                        "shareMediaCategory": "NONE",
-                    }
-                },
-                "visibility": {"com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"},
-            },
-            access_token=ACCESS_TOKEN,
-        )
-        return {'message': 'Publicación exitosa en LinkedIn.'}
-    except Exception as e:
-        return {'error': str(e)}
+    
