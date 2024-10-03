@@ -8,7 +8,7 @@ def lambda_handler(event, context):
     secret_name = "linkedin_access_token"
     region_name = "us-east-1"
 
-    # Create a Secrets Manager client
+    # Crear un cliente de Secrets Manager
     session = boto3.session.Session()
     client = session.client(
         service_name='secretsmanager',
@@ -20,8 +20,7 @@ def lambda_handler(event, context):
             SecretId=secret_name
         )
     except ClientError as e:
-        # For a list of exceptions thrown, see
-        # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+        # Manejar excepciones de Secrets Manager
         raise e
 
     secret = get_secret_value_response['SecretString']
@@ -39,10 +38,6 @@ def lambda_handler(event, context):
     person_urn = me_response.entity['id']
 
     # Obtener el contenido generado por OpenAI desde el evento
-    #content = event
-
-    # Construir el texto de la publicación
-    # post_text = f"{content['Título']}\n\n{content['Resumen']}\n\n{content['Enlace']}\n\n{content['Hashtags']}"
     post_text = event.get('message', '')
     if not post_text:
         return {'error': 'No se proporcionó ningún enlace.'}
@@ -52,4 +47,20 @@ def lambda_handler(event, context):
         ugc_posts_create_response = restli_client.create(
             resource_path=UGC_POSTS_RESOURCE,
             entity={
-    
+                "author": f"urn:li:person:{person_urn}",
+                "lifecycleState": "PUBLISHED",
+                "specificContent": {
+                    "com.linkedin.ugc.ShareContent": {
+                        "shareCommentary": {
+                            "text": post_text
+                        },
+                        "shareMediaCategory": "NONE",
+                    }
+                },
+                "visibility": {"com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"},
+            },
+            access_token=ACCESS_TOKEN,
+        )
+        return {'message': 'Publicación exitosa en LinkedIn.'}
+    except Exception as e:
+        return {'error': str(e)}
