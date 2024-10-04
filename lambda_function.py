@@ -27,7 +27,7 @@ def lambda_handler(event, context):
     secret = json.loads(secret)
     ACCESS_TOKEN = secret.get(secret_name)
 
-    ME_RESOURCE = "/me"
+    ME_RESOURCE = "/userinfo"
     UGC_POSTS_RESOURCE = "/ugcPosts"
 
     restli_client = RestliClient()
@@ -35,7 +35,7 @@ def lambda_handler(event, context):
 
     # Obtener el ID del usuario de LinkedIn
     me_response = restli_client.get(resource_path=ME_RESOURCE, access_token=ACCESS_TOKEN)
-    person_urn = me_response.entity['id']
+    person_urn = me_response.entity['sub']
 
     # Obtener el contenido generado por OpenAI desde el evento
     post_text = event.get('message', '')
@@ -64,3 +64,16 @@ def lambda_handler(event, context):
         return {'message': 'Publicación exitosa en LinkedIn.'}
     except Exception as e:
         return {'error': str(e)}
+
+## Simular la ejecución local con un evento de prueba
+#if __name__ == "__main__":
+#    # Crear un evento simulado
+#    event = {
+#        "message": "Test Message"
+#    }
+#
+#    # Ejecutar la función Lambda con el evento simulado
+#    result = lambda_handler(event, context=None)
+#    
+#    # Imprimir el resultado de la ejecución
+#    print(result)
