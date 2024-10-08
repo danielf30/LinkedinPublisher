@@ -38,7 +38,11 @@ def lambda_handler(event, context):
     person_urn = me_response.entity['sub']
 
     # Obtener el contenido generado por OpenAI desde el evento
-    post_text = event[0].get('message', '')
+    output_str = event.get('InputString', '')
+    
+    # Desanidar el JSON string
+    output_json = json.loads(output_str)
+    post_text = output_json.get('message', '')
     if not post_text:
         return {'error': 'No se proporcionó ningún enlace.'}
 
