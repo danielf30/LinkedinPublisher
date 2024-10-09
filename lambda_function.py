@@ -37,11 +37,8 @@ def lambda_handler(event, context):
     me_response = restli_client.get(resource_path=ME_RESOURCE, access_token=ACCESS_TOKEN)
     person_urn = me_response.entity['sub']
 
-    # Obtener el contenido generado por OpenAI desde el evento
-    output_str = event.get('InputString', '')
     
-    # Desanidar el JSON string
-    output_json = json.loads(output_str)
+    output_json = json.loads(event['InputString'])
     post_text = output_json.get('message', '')
     if not post_text:
         return {'error': 'No se proporcionó ningún enlace.'}
