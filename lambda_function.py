@@ -36,10 +36,8 @@ def lambda_handler(event, context):
     # Obtener el ID del usuario de LinkedIn
     me_response = restli_client.get(resource_path=ME_RESOURCE, access_token=ACCESS_TOKEN)
     person_urn = me_response.entity['sub']
-
     
-    output_json = json.loads(event['InputString'])
-    post_text = output_json.get('message', '')
+    post_text = event.get('InputString', '')
     if not post_text:
         return {'error': 'No se proporcionó ningún enlace.'}
 
